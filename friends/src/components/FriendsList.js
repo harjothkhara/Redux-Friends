@@ -1,9 +1,21 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { getFriends } from '../actions';
+import Friend from './Friend';
 
-const FriendsList = props => {
-    return (
-        <h1>FriendsList</h1>
-    )
+class FriendsList extends React.Component {
+    componentDidMount() {
+        this.props.getFriends()
+    }
+
+    render() {
+        return (
+            this.props.friends.map(friend => <Friend key={friend.id} friend={friend}/> )
+        )
+    }
 }
+const mapStateToProps = state => ({
+    friends: state.friends
+})
 
-export default FriendsList
+export default connect(mapStateToProps, { getFriends }) (FriendsList)

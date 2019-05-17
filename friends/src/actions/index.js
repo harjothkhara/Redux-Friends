@@ -1,11 +1,14 @@
-import axios from 'axios';
+import axiosAuth from '../authenticate';
 
 export const LOGIN_START = "LOGIN_START";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const GET_FRIENDS = "GET_FRIENDS";
+export const GET_FRIENDS_SUCCESS = "GET_FRIENDS_SUCCESS";
+export const GET_FRIENDS_FAILURE = "GET_FRIENDS_FAILURE";
 
 export const login = creds => dispatch => {
     dispatch({ type: LOGIN_START });
-    return axios
+    return axiosAuth()
     .post('http://localhost:5000/api/login', creds)
     .then (res => {
         localStorage.setItem('token', res.data.payload);
@@ -13,7 +16,20 @@ export const login = creds => dispatch => {
         console.log(res);
     })
     .catch(err => {
-        console.log(err)
+        console.log(err.message)
     })
 
 };
+
+export const getFriends = () => dispatch => {
+    dispatch({ type: GET_FRIENDS, payload: localStorage.getItem('token')})
+    axiosAuth().get('http://localhost:5000/api/friends')
+    .then(res => {
+      console.log(res);
+      dispatch({ type: GET_FRIENDS_SUCCESS, payload: res.data })
+    })
+    .catch(err => {
+      console.log(err)
+      dispatch({ type: GET_FRIENDS_FAILURE, payload: err.message })
+    })
+}
